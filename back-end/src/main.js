@@ -9,7 +9,7 @@ const initHttp = async () => {
         host: config.httpServerconfig.listenHost,
         routes:{
             cors:{
-                origin:[config.cors]
+                origin:["*"]
             }
         }
     })
@@ -46,52 +46,48 @@ const initWebsockets = async () => {
         }
       })
 
-    let jobId=""
-    let timeStamp=""
-
     io.on('connection', (socket) => {
-        console.log('connected');  
+        console.log('connected and no of clients connected', io.engine.clientsCount);  
         socket.on('generateChecklist', (data) => {
-            console.log('generateChecklist========================'); 
-            jobId = data.jobId
-            timeStamp = data.timeStamp  
+            let jobId = data.jobId
+            let timeStamp = data.timeStamp  
             let i= 0
             const setInter = setInterval(()=>{
-                if(i === 4){
+                if(i === 5){
                     clearInterval(setInter)
-    
                 }
                 let msg = ""
                 switch(i){
                     case 0:
-                        msg = "duty result";
+                        msg = `Duty api called for the job ${jobId} and timestamp is ${timeStamp}`;
                         break;
                     case 1:
-                        msg = "checklist result";
+                        msg = `Job service and job item service called for the job ${jobId} and timestamp is ${timeStamp}`;
                         break;
                     case 2:
-                        msg = "flatfile result";
+                        msg = `Checklist api called for the job ${jobId} and timestamp is ${timeStamp}`;
+                        break;
+                    case 3:
+                        msg = `Flatfile api called for the job ${jobId} and timestamp is ${timeStamp}`;
+                        break;
+                    case 4:
+                        msg = `Checklist history called for the job ${jobId} and timestamp is ${timeStamp}`;
                         break;
                     default:
-                        msg = "All calls are over"
+                        msg = `Done`
                 }
-                socket.emit("generateChecklistData" ,msg);
+                if( msg === `Done`){
+                    socket.emit("Done" ,msg);
+                    socket.disconnect(true)
+                }
+                else{
+                    socket.emit("generateChecklistData" ,msg);
+                }
+                
                 i += 1
             }, 1000)     
         });   
     });
-
-
-
-
-    // io.on("connection", function (socket) {
-
-    //     console.log('connected');
-    
-    //      Do all the socket stuff here.
-    
-    // })
-    
 
     await server.start()
     console.log(`Websocket server running on ${server.info.uri}`)
