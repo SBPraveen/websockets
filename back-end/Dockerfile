@@ -1,5 +1,9 @@
 FROM public.ecr.aws/docker/library/node:lts-buster-slim
 
+RUN mkdir /app
+
+WORKDIR /app
+
 COPY . .
 
 RUN npm install --quiet --production

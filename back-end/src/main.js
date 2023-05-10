@@ -34,7 +34,7 @@ const initWebsockets = async () => {
         host: config.websocketServerconfig.listenHost,
         routes:{
             cors:{
-                origin:["http://localhost:3000"]
+                origin:["*"]
             }
         }
     })
