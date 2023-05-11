@@ -34,14 +34,14 @@ const initWebsockets = async () => {
         host: config.websocketServerconfig.listenHost,
         routes:{
             cors:{
-                origin:["*"]
+                origin:["http://localhost:3000","https://www.sbpraveen.com"]
             }
         }
     })
 
     const io = SocketIO(server.listener, {
         cors: {
-          origin: "http://localhost:3000",
+            origin: ["http://localhost:3000","https://www.sbpraveen.com"],
           methods: ["GET", "POST"]
         }
       })
